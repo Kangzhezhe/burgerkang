@@ -173,22 +173,98 @@ $(document).ready(function() {
     $(window).scroll(function() {
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(function() {
-            var scrollPos = $(window).scrollTop() + 100; // Offset
+            var scrollPos = $(window).scrollTop() + 100; // Offset matches header height + padding
             
             // Find the section that is currently in view
             var currentId = "";
             $('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5').each(function() {
-                if ($(this).offset().top < scrollPos) {
-                    currentId = '#' + $(this).attr('id');
+                var $this = $(this);
+                // If this header is above the "read line"
+                if ($this.offset().top < scrollPos) {
+                    currentId = '#' + $this.attr('id');
                 }
             });
 
             if (currentId) {
+                // Robust matching handling URL encoding (e.g. for Chinese headers)
+                var $currentLink = $('.toc-link').filter(function() {
+                    var href = $(this).attr('href');
+                    if (!href) return false;
+                    try {
+                        return decodeURIComponent(href) === decodeURIComponent(currentId);
+                    } catch (e) {
+                        return href === currentId;
+                    }
+                });
+
+                if ($currentLink.length && !$currentLink.hasClass('active')) {
+                    $('.toc-link').removeClass('active');
+                    $currentLink.addClass('active');
+
+                     // Auto-scroll TOC to show active link
+                    var $tocContent = $toc.find('.toc-content');
+                    if ($tocContent.length && !$toc.hasClass('collapsed')) {
+                       // detailed scroll logic could go here, omitting for simplicity unless requested
+                    }
+                }
+            } else {
+                // If at top and no header passed yet, maybe highlight first? 
+                // Or clear all. Clearing is safer.
                 $('.toc-link').removeClass('active');
-                var $activeLink = $('.toc-link[href="' + currentId + '"]');
-                $activeLink.addClass('active');
             }
         }, 50);
     });
   }
 });
+
+
+
+
+$(document).ready(function() {
+  // Category Modal Logic
+  var $modal = $('#categoryModal');
+  var $btn = $('#categoryMoreBtn');
+  var $close = $('.close-modal');
+
+  if ($modal.length && $btn.length) {
+    $btn.click(function(e) {
+      e.stopPropagation();
+      $modal.css('display', 'block');
+      $('body').css('overflow', 'hidden');
+    });
+
+    $close.click(function() {
+      $modal.css('display', 'none');
+      $('body').css('overflow', 'auto');
+    });
+
+    $(window).click(function(event) {
+      if (event.target == $modal[0]) {
+        $modal.css('display', 'none');
+        $('body').css('overflow', 'auto');
+      }
+    });
+
+    $(document).keydown(function(e) {
+      if (e.key === "Escape" && $modal.css('display') === 'block') {
+        $modal.css('display', 'none');
+        $('body').css('overflow', 'auto');
+      }
+    });
+  }
+});
+
+
+/* Scroll Down Logic */
+$(document).ready(function() {
+  $("#scrollDownBtn").click(function() {
+    var $target = $(".container"); 
+    // Or .main-column, but .container starts the content area
+    if ($target.length) {
+      $("html, body").animate({
+        scrollTop: $target.offset().top + 50 // Adjust if needed
+      }, 800);
+    }
+  });
+});
+

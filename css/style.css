@@ -213,65 +213,73 @@ ul {
   border-bottom: none;
 }
 
-/* Tag Cloud / Capsules Style */
+/* Tag Cloud / Capsules Style (Refined: Text + Superscript Count) */
 .widget .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 0;
-  justify-content: center;
+  gap: 4px 6px; /* 更加紧凑的间距 */
+  padding: 0 5px;
+  justify-content: center; /* 保持居中或改为 flex-start 左对齐 */
 }
 
 .widget .tag-list-item {
   display: inline-flex;
-  align-items: center; /* Fix alignment */
-  border-bottom: none;
-  margin-bottom: 0;
-  padding: 0;
+  align-items: baseline; /* 基线对齐，确保文字对齐 */
+  margin: 0;
+  padding: 4px 8px; /* 给hover背景留出呼吸空间 */
+  border-radius: 6px; /* 圆角矩形 */
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+/* Hover 效果：模仿截图中的蓝色高亮块 */
+.widget .tag-list-item:hover {
+  background: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .widget .tag-list-link {
   display: inline-block;
-  padding: 5px 12px;
-  background: #f0f2f5;
-  border-radius: 20px 0 0 20px; /* Capsule shape left */
-  color: #555;
-  font-size: 13px;
-  line-height: 1.5;
-  transition: all 0.3s ease;
-  border: 1px solid #e1e4e8;
-  border-right: none;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #555; /* 默认文字深灰 */
+  font-size: 14px;
+  transition: color 0.2s;
 }
 
+/* 恢复 # 号前缀 */
 .widget .tag-list-link::before {
-  content: "# ";
-  opacity: 0.6;
+  content: "#"; /* 紧凑不用空格，或者 "# " */
+  color: #ccc;  /* 让井号淡淡的，不抢视觉 */
+  margin-right: 2px;
+  font-weight: normal;
 }
 
 .widget .tag-list-count {
   display: inline-block;
-  padding: 5px 10px;
-  background: #eef1f6;
-  border-radius: 0 20px 20px 0; /* Capsule shape right */
-  color: #555;
-  font-size: 13px; /* Match font size */
-  border: 1px solid #e1e4e8;
-  border-left: 1px solid #fff;
-  line-height: 1.5; /* Ensure vertical alignment matches link */
-  transition: all 0.3s ease;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #999; /* 默认数字浅灰 */
+  font-size: 10px; /* 极小字号 */
+  margin-left: 2px;
+  position: relative;
+  top: -5px; /* 上移实现上标效果 */
+  transition: color 0.2s;
 }
 
+/* Hover 时的文字和数字颜色变化 */
 .widget .tag-list-item:hover .tag-list-link {
-  background: var(--primary-color);
   color: #fff;
-  border-color: var(--primary-color);
+  background: none;
+  border: none;
 }
 
 .widget .tag-list-item:hover .tag-list-count {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
-  border-left-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: rgba(255, 255, 255, 0.8);
+  background: none;
+  border: none;
 }
 
 
@@ -881,4 +889,547 @@ ul {
   animation-duration: 0.4s;
 }
 
+
+
+/* --- Homepage Redesign (Category Bar + Grid) --- */
+
+/* Main Column Wrapper */
+.main-column {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Category Navigation Bar */
+.category-nav {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.category-scroll-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  flex: 1;
+  height: 32px; /* Fixed height for single row (approx) */
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.category-scroll-container.expanded {
+  height: auto; /* Let it grow */
+  max-height: 500px;
+}
+
+.category-chip {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.category-chip:hover, .category-chip.active {
+    color: var(--primary-color);
+    background: rgba(255, 152, 0, 0.08);
+}
+
+.category-more-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    margin-left: 10px;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.category-more-btn:hover {
+    color: var(--primary-color);
+}
+
+.category-more-btn i {
+    transition: transform 0.3s;
+}
+
+.category-more-btn.expanded i {
+    transform: rotate(90deg);
+}
+
+/* Post Grid Layout */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+/* Override existing post-card styles for grid */
+.main-column .post-card {
+    height: 100%;
+    margin-bottom: 0; /* Reset margin from list view */
+    display: flex;
+    flex-direction: column;
+}
+
+.main-column .post-card-link {
+    flex-direction: column !important; /* Force stack */
+    height: 100%;
+}
+
+.main-column .post-cover {
+    height: 200px !important;
+    width: 100% !important;
+    flex: none; /* Don't grow */
+}
+
+.main-column .post-info {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-column .post-title {
+    font-size: 20px; /* Smaller title for cards */
+    margin-bottom: 10px;
+}
+
+.main-column .post-excerpt {
+    font-size: 14px;
+    margin-bottom: 15px;
+    flex: 1; /* Push meta to bottom */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.main-column .post-meta {
+    margin-top: auto;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+    font-size: 12px;
+}
+
+
+/* Category Modal */
+.category-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s;
+}
+
+.category-modal-content {
+  background-color: var(--card-bg);
+  margin: 0px auto;
+  padding: 25px 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+  position: relative;
+  animation: slideDown 0.3s;
+}
+
+.category-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.category-modal-header h2 {
+  font-size: 24px;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.close-modal {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-modal:hover {
+  color: var(--primary-color);
+}
+
+.modal-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.modal-category-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 25px;
+  background: var(--bg-color);
+  border-radius: 30px;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.modal-category-item:hover {
+  background: var(--primary-color);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.2);
+}
+
+.modal-category-item .count {
+  background: rgba(0,0,0,0.1);
+  border-radius: 50%;
+  font-size: 12px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  padding: 0 6px;
+}
+
+.modal-category-item:hover .count {
+  background: rgba(255,255,255,0.3);
+}
+
+@keyframes fadeIn {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+@keyframes slideDown {
+  from {transform: translateY(-20px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+
+/* Full Screen Header for Home */
+.header.full-screen {
+  min-height: 100vh;
+  justify-content: center; /* Center content vertically */
+}
+
+/* Adjust navbar position for full screen header */
+.header.full-screen .navbar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.header.full-screen .hero {
+  margin-bottom: 0;
+  /* Shift up slightly to look centered visually */
+  transform: translateY(-20px);
+}
+
+/* Scroll Down Indicator (Animated Arrows) */
+.scroll-down {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  z-index: 10;
+  padding: 20px;
+}
+
+.scroll-down span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
+  transform: rotate(45deg);
+  margin: -10px;
+  animation: scrollDownAnim 2s infinite;
+}
+
+.scroll-down span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.scroll-down span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes scrollDownAnim {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) translate(-20px, -20px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(45deg) translate(20px, 20px);
+  }
+}
+
+
+/* Fix: Remove overlap on Home to ensure content is below the fold */
+.home-container {
+  margin-top: 0;
+  border-radius: 0; /* Optional: reset radius top if it looks detached? No, keep card style */
+}
+
+/* Ensure no negative margin pulls it up on any screen size for home */
+@media (min-width: 1200px) {
+  .home-container {
+    margin-top: 20px; /* Add slight gap on large screens */
+  }
+}
+
+
+/* --- Timeline Archive Styles --- */
+
+.timeline-header {
+  margin-bottom: 40px;
+  position: relative;
+  text-align: center;
+}
+
+.timeline-total-count {
+  background: var(--primary-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(255,152,0,0.3);
+}
+
+.archive-timeline {
+  position: relative;
+  /* border-left: 2px solid #e1e4e8;  We use pseudo element for line to control z-index better or just use this */
+  padding-left: 30px;
+  padding-bottom: 40px;
+  margin-top: 30px;
+}
+
+/* The vertical line */
+.archive-timeline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 0;
+    width: 2px;
+    background: #eef2f5;
+    border-radius: 2px;
+}
+
+.timeline-year {
+  margin: 40px 0 20px; 
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.year-num {
+  font-size: 26px;
+  font-weight: bold;
+  font-family: var(--font-heading);
+  color: #cbd5e0; /* Muted color for year */
+}
+
+/* Year Dot */
+.timeline-year::before {
+    content: "";
+    position: absolute;
+    left: -35px; /* Adjust based on padding (30) + line width */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: 3px solid #cbd5e0;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeUp 0.5s forwards;
+}
+
+.timeline-item:nth-child(odd) { animation-delay: 0.1s; }
+.timeline-item:nth-child(even) { animation-delay: 0.2s; }
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  position: absolute;
+  left: -34px; /* match padding-left of container approx */
+  top: 24px;
+  transition: all 0.3s;
+  z-index: 2;
+  box-shadow: 0 0 0 3px #fff; /* separation from line */
+}
+
+.timeline-item:hover .timeline-dot {
+  background: var(--primary-color);
+  transform: scale(1.2);
+}
+
+.timeline-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.timeline-content::before {
+    /* Triangle arrow */
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 24px;
+    width: 0; 
+    height: 0; 
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent; 
+    border-right: 8px solid #fff;
+    filter: drop-shadow(-1px 1px 1px rgba(0,0,0,0.02));
+}
+
+.timeline-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  border-color: rgba(255,152,0,0.2);
+}
+
+.timeline-date {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeline-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.timeline-thumbnail {
+  width: 90px;
+  height: 65px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-left: 20px;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.timeline-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.timeline-item:hover .timeline-thumbnail img {
+  transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .archive-timeline {
+        padding-left: 20px;
+    }
+    .archive-timeline::before {
+        left: 0;
+    }
+    .timeline-dot, .timeline-year::before {
+        left: -25px; 
+    }
+    .timeline-content {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+    .timeline-thumbnail {
+        width: 100%;
+        height: 120px;
+        margin-left: 0;
+        margin-bottom: 12px;
+    }
+    .timeline-content::before {
+        display: none; /* Hide arrow on mobile if it gets messy */
+    }
+}
+
+
+/* --- Profile Card with Cover Image Fix --- */
+.profile-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.profile-cover {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--primary-color);
+}
+
+.profile-content {
+  padding: 0 30px 30px;
+  position: relative;
+}
+
+.profile-card .avatar img {
+  margin-top: -60px; /* Pull avatar up */
+  position: relative;
+  z-index: 2;
+  border: 4px solid var(--card-bg);
+  background: var(--card-bg);
+  margin-bottom: 10px;
+}
 
