@@ -97,11 +97,11 @@
 <h2 id="核心技术与算法"><a href="#核心技术与算法" class="headerlink" title="核心技术与算法"></a>核心技术与算法</h2><p>为了解决 LLM 评判可能出现的偏见（Bias）和不稳定性（Reliability），业界演化出了多种高级算法：</p>
 <h3 id="G-Eval-通用评估"><a href="#G-Eval-通用评估" class="headerlink" title="G-Eval (通用评估)"></a>G-Eval (通用评估)</h3><p>目前最先进（SOTA）的框架之一。它不直接打分，而是先基于评估标准生成一系列<strong>思维链（Chain of Thoughts）</strong>，再利用这些步骤进行评估。</p>
 <ul>
-<li><strong>特点</strong>：准确、易于调整，适用于主观标准（如”专业性”、”说服力”）。</li>
+<li><strong>特点</strong>：准确、易于调整，适用于主观标准（如”专业性”、”说服力”）。<br><img src="/burgerkang/2026/01/14/LLM-as-a-Judge-Metrics/image.png" alt="alt text"></li>
 </ul>
 <h3 id="DAG-深度无环图"><a href="#DAG-深度无环图" class="headerlink" title="DAG (深度无环图)"></a>DAG (深度无环图)</h3><p>一种基于决策树的确定性指标。通过一系列逻辑判断节点（如”是否少于4句话？” -&gt; “是&#x2F;否”）最终导向一个评分。</p>
 <ul>
-<li><strong>优势</strong>：逻辑严密，适合需要硬性规则过滤的场景。</li>
+<li><strong>优势</strong>：逻辑严密，适合需要硬性规则过滤的场景。<br><img src="/burgerkang/2026/01/14/LLM-as-a-Judge-Metrics/image-1.png" alt="alt text"></li>
 </ul>
 <h3 id="QAG-问答生成"><a href="#QAG-问答生成" class="headerlink" title="QAG (问答生成)"></a>QAG (问答生成)</h3><p>将输出拆解为细粒度的单元（如句子），针对每个单元生成”是&#x2F;否”的封闭式问题，最后通过聚合计算得分。</p>
 <ul>
