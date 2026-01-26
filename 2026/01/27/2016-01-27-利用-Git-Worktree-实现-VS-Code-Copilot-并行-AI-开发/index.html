@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="view-transition" content="same-origin">
+  <title>BurgerKang&#39;s Blog</title>
+  <link rel="stylesheet" href="/burgerkang/css/style.css">
+  
+    <link rel="shortcut icon" href="/burgerkang/images/shortcut-icon.ico">
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+
+  <header class="header " style="background-image: url('/burgerkang/images/image-bg.png');">
+  <div class="overlay"></div>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="/burgerkang/">Elent</a>
+    </div>
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/burgerkang/" class="menu-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/burgerkang/archives" class="menu-link">Archives</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <div class="hero mobile-hide">
+    <div class="hero-content">
+      
+        <h1 class="hero-title">利用 Git Worktree 实现 VS Code Copilot 并行 AI 开发</h1>
+        <div class="hero-meta">
+          <span>2026-01-27</span>
+        </div>
+      
+    </div>
+  </div>
+  
+</header>
+
+
+  <main class="content">
+    <article class="container post-container">
+  <!-- TOC Widget -->
+  <aside class="post-widget-toc" id="postWidgetToc">
+    <div class="toc-header">
+      <span class="toc-title">目录</span>
+      <button class="toc-toggle" id="tocToggle">▼</button>
+    </div>
+    <div class="toc-content" id="tocContent">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8-Git-Worktree-%E5%AE%9E%E7%8E%B0-VS-Code-Copilot-%E5%B9%B6%E8%A1%8C-AI-%E5%BC%80%E5%8F%91"><span class="toc-text">利用 Git Worktree 实现 VS Code Copilot 并行 AI 开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Git-Worktree-Copilot%EF%BC%9F"><span class="toc-text">1. 为什么选择 Git Worktree + Copilot？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6"><span class="toc-text">2. 前提条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%A0%B8%E5%BF%83%E6%8C%87%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-text">3. 核心指令速查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="toc-text">常用命令示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%B9%B6%E8%A1%8C-AI-%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%88%E5%AE%9E%E6%88%98%E6%AD%A5%E9%AA%A4%EF%BC%89"><span class="toc-text">4. 并行 AI 开发工作流（实战步骤）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BA%E7%8B%AC%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%8C%BA"><span class="toc-text">第一步：创建独立工作区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%90%AF%E5%8A%A8%E5%B9%B6%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="toc-text">第二步：启动并行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%B9%B6%E8%A1%8C-Copilot-%E5%AF%B9%E8%AF%9D"><span class="toc-text">第三步：并行 Copilot 对话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%90%88%E5%B9%B6%E4%B8%8E%E6%B8%85%E7%90%86"><span class="toc-text">第四步：合并与清理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">5. 常见应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E4%B8%80%EF%BC%9A%E7%AA%81%E5%8F%91%E7%83%AD%E4%BF%AE%E5%A4%8D-Hotfix"><span class="toc-text">场景一：突发热修复 (Hotfix)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E4%BA%8C%EF%BC%9A%E5%B9%B6%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5-Code-Review"><span class="toc-text">场景二：并行代码审查 (Code Review)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-Pitfalls"><span class="toc-text">6. 注意事项 (Pitfalls)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-VSCode-Git-Worktree-Manager-%E7%AE%A1%E7%90%86%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">7. VSCode Git Worktree Manager 管理插件的使用</span></a></li></ol></li></ol>
+    </div>
+  </aside>
+
+  <div class="post-content">
+    <h1 id="利用-Git-Worktree-实现-VS-Code-Copilot-并行-AI-开发"><a href="#利用-Git-Worktree-实现-VS-Code-Copilot-并行-AI-开发" class="headerlink" title="利用 Git Worktree 实现 VS Code Copilot 并行 AI 开发"></a>利用 Git Worktree 实现 VS Code Copilot 并行 AI 开发</h1><blockquote>
+<p><strong>核心理念</strong>：利用 Git Worktree 实现物理级别的上下文隔离，让 AI (GitHub Copilot) 在完全独立的环境中并行处理任务，消除上下文混淆，实现“零等待”开发流。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么选择-Git-Worktree-Copilot？"><a href="#1-为什么选择-Git-Worktree-Copilot？" class="headerlink" title="1. 为什么选择 Git Worktree + Copilot？"></a>1. 为什么选择 Git Worktree + Copilot？</h2><p>在传统开发中，当你在开发 Feature A 时，如果通过 <code>git stash</code> 切换去修 Bug B，Copilot 的对话历史和当前打开的上下文（Context）会变得混乱。</p>
+<p><strong>Git Worktree 的优势：</strong></p>
+<ul>
+<li><strong>物理隔离</strong>：每个 Worktree 是一个独立的文件夹，VS Code 的 <code>@workspace</code> 上下文互不干扰。</li>
+<li><strong>并行对话</strong>：你可以打开两个 VS Code 窗口，分别对应两个任务。当 Copilot 在窗口 A 生成代码时，你可以在窗口 B 继续与 Copilot 讨论重构，无需等待。</li>
+<li><strong>零切换成本</strong>：不需要反复 <code>npm install</code> 或重建索引（只要你不删除该文件夹），随时切入切出。</li>
+</ul>
+<hr>
+<h2 id="2-前提条件"><a href="#2-前提条件" class="headerlink" title="2. 前提条件"></a>2. 前提条件</h2><ul>
+<li><strong>Git 版本</strong>：需 2.5.0 或更高版本。</li>
+<li><strong>工具</strong>：VS Code + GitHub Copilot 插件。</li>
+</ul>
+<hr>
+<h2 id="3-核心指令速查"><a href="#3-核心指令速查" class="headerlink" title="3. 核心指令速查"></a>3. 核心指令速查</h2><table>
+<thead>
+<tr>
+<th align="left">操作</th>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>创建工作区</strong></td>
+<td align="left"><code>git worktree add &lt;路径&gt; &lt;分支&gt;</code></td>
+<td align="left">在指定路径新建文件夹并检出分支</td>
+</tr>
+<tr>
+<td align="left"><strong>新建分支并创建</strong></td>
+<td align="left"><code>git worktree add &lt;路径&gt; -b &lt;新分支&gt;</code></td>
+<td align="left">基于当前分支新建分支并检出到新路径</td>
+</tr>
+<tr>
+<td align="left"><strong>查看列表</strong></td>
+<td align="left"><code>git worktree list</code></td>
+<td align="left">查看当前所有活跃的工作区</td>
+</tr>
+<tr>
+<td align="left"><strong>删除工作区</strong></td>
+<td align="left"><code>git worktree remove &lt;路径&gt;</code></td>
+<td align="left">删除文件夹并解除关联（需确保无未提交更改）</td>
+</tr>
+</tbody></table>
+<h3 id="常用命令示例"><a href="#常用命令示例" class="headerlink" title="常用命令示例"></a>常用命令示例</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 基于已有的 feature/api 分支，在上一级目录创建名为 feature-api 的工作区</span></span><br><span class="line">git worktree add ../feature<span class="literal">-api</span> feature/api</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 新建一个 fix/bug 分支，并在上一级目录创建名为 fix-bug 的工作区</span></span><br><span class="line">git worktree add ../fix<span class="literal">-bug</span> <span class="literal">-b</span> fix/bug</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 查看所有工作区</span></span><br><span class="line">git worktree list</span><br><span class="line"><span class="comment"># 输出示例:</span></span><br><span class="line"><span class="comment"># D:/mins_test           (main)</span></span><br><span class="line"><span class="comment"># D:/feature-api         (feature/api)</span></span><br><span class="line"><span class="comment"># D:/fix-bug             (fix/bug)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 删除工作区 (任务完成后)</span></span><br><span class="line"><span class="comment"># 这一步会自动删除文件夹，并清理 .git 中的 worktree 记录</span></span><br><span class="line">git worktree remove ../feature<span class="literal">-api</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 删除已合并分支 (可选)</span></span><br><span class="line">git branch <span class="literal">-d</span> feature/api</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-并行-AI-开发工作流（实战步骤）"><a href="#4-并行-AI-开发工作流（实战步骤）" class="headerlink" title="4. 并行 AI 开发工作流（实战步骤）"></a>4. 并行 AI 开发工作流（实战步骤）</h2><p>假设你正在主目录 (<code>/my-project</code>) 开发，现在遇到两个任务：</p>
+<ol>
+<li><strong>任务 A</strong>：开发新 API (<code>feature/api</code>)</li>
+<li><strong>任务 B</strong>：重构老模块 (<code>refactor/module</code>)</li>
+</ol>
+<h3 id="第一步：创建独立工作区"><a href="#第一步：创建独立工作区" class="headerlink" title="第一步：创建独立工作区"></a>第一步：创建独立工作区</h3><p>在主项目终端执行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 为任务 A 创建工作区 (位于上级目录的 feature-api 文件夹)</span></span><br><span class="line">git worktree add ../feature<span class="literal">-api</span> <span class="literal">-b</span> feature/api</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 为任务 B 创建工作区 (位于上级目录的 refactor-module 文件夹)</span></span><br><span class="line">git worktree add ../refactor<span class="literal">-module</span> <span class="literal">-b</span> refactor/module</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二步：启动并行环境"><a href="#第二步：启动并行环境" class="headerlink" title="第二步：启动并行环境"></a>第二步：启动并行环境</h3><p>打开两个新的 VS Code 窗口：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 窗口 A</span></span><br><span class="line">code ../feature<span class="literal">-api</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 窗口 B</span></span><br><span class="line">code ../refactor<span class="literal">-module</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：并行-Copilot-对话"><a href="#第三步：并行-Copilot-对话" class="headerlink" title="第三步：并行 Copilot 对话"></a>第三步：并行 Copilot 对话</h3><p>利用物理隔离的特性，同时进行两场对话：</p>
+<ul>
+<li><strong>VS Code 窗口 A (feature-api)</strong>:<ul>
+<li><strong>User</strong>: “@workspace 请帮我基于 <code>/models</code> 设计一个新的 User API…”</li>
+<li><em>(Copilot 生成代码中…)</em></li>
+</ul>
+</li>
+<li><strong>VS Code 窗口 B (refactor-module)</strong>:<ul>
+<li><strong>User</strong>: “切换窗口，不需要等待窗口 A。@workspace 分析 <code>legacy-module.ts</code> 的坏味道并重构。”</li>
+<li><em>(Copilot 分析代码中…)</em></li>
+</ul>
+</li>
+</ul>
+<p><strong>结果</strong>：两个 Copilot 实例读取的是完全不同的文件系统状态，不会产生幻觉或上下文污染。</p>
+<h3 id="第四步：合并与清理"><a href="#第四步：合并与清理" class="headerlink" title="第四步：合并与清理"></a>第四步：合并与清理</h3><p>任务完成后：</p>
+<ol>
+<li>在各自窗口提交代码 (<code>git commit</code>).</li>
+<li>回到主目录合并：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../my<span class="literal">-project</span></span><br><span class="line">git merge feature/api</span><br><span class="line">git merge refactor/module</span><br></pre></td></tr></table></figure></li>
+<li>清理环境（删除目录与临时分支）：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 移除 worktree 目录</span></span><br><span class="line">git worktree remove ../feature<span class="literal">-api</span></span><br><span class="line">git worktree remove ../refactor<span class="literal">-module</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除已合并的功能分支</span></span><br><span class="line">git branch <span class="literal">-d</span> feature/api</span><br><span class="line">git branch <span class="literal">-d</span> refactor/module</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="5-常见应用场景"><a href="#5-常见应用场景" class="headerlink" title="5. 常见应用场景"></a>5. 常见应用场景</h2><h3 id="场景一：突发热修复-Hotfix"><a href="#场景一：突发热修复-Hotfix" class="headerlink" title="场景一：突发热修复 (Hotfix)"></a>场景一：突发热修复 (Hotfix)</h3><p>正在开发复杂功能时，生产环境需要修 Bug。</p>
+<ul>
+<li><strong>传统做法</strong>：<code>git stash</code> -&gt; <code>git checkout main</code> -&gt; 修 bug -&gt; <code>git checkout feature</code> -&gt; <code>git stash pop</code> (容易冲突)。</li>
+<li><strong>Worktree 做法</strong>：<code>git worktree add ../hotfix-prod main</code> -&gt; 在新窗口修 bug -&gt; 提交且推送 -&gt; 删除 worktree。主窗口完全不受影响。</li>
+</ul>
+<h3 id="场景二：并行代码审查-Code-Review"><a href="#场景二：并行代码审查-Code-Review" class="headerlink" title="场景二：并行代码审查 (Code Review)"></a>场景二：并行代码审查 (Code Review)</h3><p>同事发来了两个 PR 需要 Review。</p>
+<ul>
+<li>命令：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git worktree add ../review-pr-101 <span class="built_in">pr</span>/101</span><br><span class="line">git worktree add ../review-pr-102 <span class="built_in">pr</span>/102</span><br></pre></td></tr></table></figure></li>
+<li>操作：同时打开两个窗口运行代码、查看效果，互不干扰。</li>
+</ul>
+<hr>
+<h2 id="6-注意事项-Pitfalls"><a href="#6-注意事项-Pitfalls" class="headerlink" title="6. 注意事项 (Pitfalls)"></a>6. 注意事项 (Pitfalls)</h2><ol>
+<li><strong>环境配置</strong>：<ul>
+<li>新 Worktree 是纯净的代码检出，<strong>不包含</strong>git ignored 文件（如 <code>.env</code>）。你需要手动复制 <code>.env</code> 文件过去。</li>
+<li><strong>依赖安装</strong>：新目录没有 <code>node_modules</code> 或 <code>.venv</code>。<ul>
+<li><em>Node&#x2F;Frontend</em>: 需重新 <code>npm install</code>。</li>
+<li><em>Python</em>: 需重新创建虚拟环境或通过 VS Code 选择已有的解释器路径。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>磁盘空间</strong>：虽然共享 <code>.git</code> 历史节省了空间，但 checkout 出来的文件和新安装的依赖（如 node_modules）会占用额外的磁盘空间。</li>
+</ol>
+<h2 id="7-VSCode-Git-Worktree-Manager-管理插件的使用"><a href="#7-VSCode-Git-Worktree-Manager-管理插件的使用" class="headerlink" title="7. VSCode Git Worktree Manager 管理插件的使用"></a>7. VSCode Git Worktree Manager 管理插件的使用</h2><ol>
+<li><strong>Git Worktree Manager 介绍</strong>： 在 Visual Studio Code 中安全、高效地管理 Git worktree。轻松创建、切换和清理 worktree，同时保持分支关系清晰可控。<br>其实就是把上述提到的指令封装成前端vscode插件，方便以图形化的方式使用。<br><img src="/burgerkang/2026/01/27/2016-01-27-%E5%88%A9%E7%94%A8-Git-Worktree-%E5%AE%9E%E7%8E%B0-VS-Code-Copilot-%E5%B9%B6%E8%A1%8C-AI-%E5%BC%80%E5%8F%91/image.png" alt="alt text"></li>
+</ol>
+
+  </div>
+  
+  
+  
+  <div class="post-navigation">
+    
+    
+      <a href="/burgerkang/2026/01/14/hello-world/" class="nav-next">Hello World &rarr;</a>
+    
+  </div>
+</article>
+
+  </main>
+
+  <footer class="footer">
+  <div class="footer-content">
+    <p>&copy; 2026 BurgerKang</p>
+    <p>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> | Theme <a href="#">Elent</a></p>
+  </div>
+</footer>
+
+
+  <script src="/burgerkang/js/jquery.min.js"></script>
+  <script src="/burgerkang/js/script.js"></script>
+</body>
+</html>
